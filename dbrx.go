@@ -28,7 +28,7 @@ type DML interface {
 	Union(builders ...dbr.Builder) *UnionStmt
 	RunAfterCommit(func()) error
 	updateBySql(sql string) *dbr.UpdateBuilder
-	selectBySql(sql string, value ...interface{}) *dbr.SelectBuilder
+	SelectBySql(sql string, value ...interface{}) *dbr.SelectBuilder
 	insertBySql(sql string, value ...interface{}) *dbr.InsertStmt
 	TranslateString(text, regex, replace string) string
 	Translate(text, regex, replace string) dbr.Builder
@@ -131,7 +131,7 @@ func (w *wrapper) updateBySql(sql string) *dbr.UpdateBuilder {
 	return w.Session.UpdateBySql(sql)
 }
 
-func (w *wrapper) selectBySql(sql string, value ...interface{}) *dbr.SelectBuilder {
+func (w *wrapper) SelectBySql(sql string, value ...interface{}) *dbr.SelectBuilder {
 	return w.Session.SelectBySql(sql, value...)
 }
 
@@ -192,7 +192,7 @@ func (t outerTransaction) RunAfterCommit(f func()) error {
 	return t.w.RunAfterCommit(f)
 }
 
-func (t outerTransaction) selectBySql(sql string, value ...interface{}) *dbr.SelectBuilder {
+func (t outerTransaction) SelectBySql(sql string, value ...interface{}) *dbr.SelectBuilder {
 	return t.Tx.SelectBySql(sql, value...)
 }
 
@@ -252,7 +252,7 @@ func (t innerTransaction) RunAfterCommit(f func()) error {
 	return t.w.RunAfterCommit(f)
 }
 
-func (t innerTransaction) selectBySql(sql string, value ...interface{}) *dbr.SelectBuilder {
+func (t innerTransaction) SelectBySql(sql string, value ...interface{}) *dbr.SelectBuilder {
 	return t.Tx.SelectBySql(sql)
 }
 
@@ -354,7 +354,7 @@ func (b *SelectStmt) Load(value interface{}) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	return b.dml.selectBySql(str).Load(value)
+	return b.dml.SelectBySql(str).Load(value)
 }
 
 // InsertStmt overcomes dbr.InsertStmt limitations
@@ -779,7 +779,7 @@ func (us *UnionStmt) LoadContext(ctx context.Context, value interface{}) (int, e
 	if err != nil {
 		return 0, err
 	}
-	return us.dml.selectBySql(str).LoadContext(ctx, value)
+	return us.dml.SelectBySql(str).LoadContext(ctx, value)
 }
 
 type MultipleEventReceiver []dbr.EventReceiver
